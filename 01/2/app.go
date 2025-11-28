@@ -15,18 +15,18 @@ func orderArray(values []int) []int {
 	return values
 }
 
-func totalDistance(leftValues, rightValues []int) int {
-	if len(leftValues) != len(rightValues) {
-		log.Fatalf("left and right slices differ in length: %d vs %d", len(leftValues), len(rightValues))
+func getCounts(values []int) map[int]int {
+	counts := make(map[int]int, len(values))
+	for _, v := range values {
+		counts[v]++
 	}
+	return counts
+}
 
+func totalSimilarities(leftValues []int, rightCounts map[int]int) int {
 	total := 0
-	for i := 0; i < len(leftValues); i++ {
-		diff := leftValues[i] - rightValues[i]
-		if diff < 0 {
-			diff = -diff
-		}
-		total += diff
+	for _, v := range leftValues {
+		total += v * rightCounts[v]
 	}
 	return total
 }
@@ -59,8 +59,9 @@ func main() {
 
 	leftValues = orderArray(leftValues)
 	rightValues = orderArray(rightValues)
+	rightValueCounts := getCounts(rightValues)
 
-	total := totalDistance(leftValues, rightValues)
+	total := totalSimilarities(leftValues, rightValueCounts)
 
 	fmt.Println(total)
 	fmt.Printf("run time: %s\n", time.Since(start))
